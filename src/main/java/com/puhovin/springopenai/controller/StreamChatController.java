@@ -1,7 +1,7 @@
-package com.puhovin.claudespringai.controller;
+package com.puhovin.springopenai.controller;
 
-import com.puhovin.claudespringai.dto.ChatRequest;
-import com.puhovin.claudespringai.service.ClaudeStreamService;
+import com.puhovin.springopenai.dto.ChatRequest;
+import com.puhovin.springopenai.service.OpenAiStreamService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,18 +18,18 @@ import reactor.core.publisher.Flux;
 
 @RestController
 @RequestMapping("/chat")
-@Tag(name = "Chat", description = "Streaming chat API for Claude AI interactions")
+@Tag(name = "Chat", description = "Streaming chat API for OpenAI interactions")
 public class StreamChatController {
 
-    private final ClaudeStreamService streamService;
+    private final OpenAiStreamService streamService;
 
-    public StreamChatController(ClaudeStreamService streamService) {
+    public StreamChatController(OpenAiStreamService streamService) {
         this.streamService = streamService;
     }
 
     @Operation(
             summary = "Stream chat response",
-            description = "Sends a message to Claude AI and streams back the response as text chunks",
+            description = "Sends a message to OpenAI and streams back the response as text chunks",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successfully streaming response",
                             content = @Content(mediaType = MediaType.TEXT_EVENT_STREAM_VALUE, schema = @Schema(implementation = String.class))),
@@ -43,7 +43,7 @@ public class StreamChatController {
 
     @Operation(
             summary = "Stream chat response with Server-Sent Events",
-            description = "Sends a message to Claude AI and streams back the response as structured Server-Sent Events with event IDs",
+            description = "Sends a message to OpenAI and streams back the response as structured Server-Sent Events with event IDs",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successfully streaming SSE response",
                             content = @Content(mediaType = MediaType.TEXT_EVENT_STREAM_VALUE)),

@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.puhovin'
 version = '1.0.0'
-description = 'claude-spring-ai'
+description = 'spring-openai-example'
 
 java {
     toolchain {
@@ -29,7 +29,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // Spring AI
-    implementation 'org.springframework.ai:spring-ai-starter-model-anthropic'
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
 
     // Springdoc
     implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.14'

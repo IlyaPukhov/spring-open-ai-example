@@ -1,15 +1,15 @@
-package com.puhovin.claudespringai.controller;
+package com.puhovin.springopenai.controller;
 
-import com.puhovin.claudespringai.config.TestConfig;
-import com.puhovin.claudespringai.dto.ChatRequest;
+import com.puhovin.springopenai.config.TestConfig;
+import com.puhovin.springopenai.dto.ChatRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.ai.anthropic.AnthropicChatModel;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,7 +39,7 @@ class StreamChatControllerIntegrationTest {
     private WebTestClient webTestClient;
 
     @Autowired
-    private AnthropicChatModel chatModel;
+    private OpenAiChatModel chatModel;
 
     @BeforeEach
     void setup() {
@@ -49,7 +49,7 @@ class StreamChatControllerIntegrationTest {
     @Test
     @DisplayName("POST /chat/stream should stream chat response successfully")
     void shouldStreamChatResponse_successfully() {
-        ChatRequest request = new ChatRequest("Hello, Claude!");
+        ChatRequest request = new ChatRequest("Hello, chat!");
         ChatResponse response1 = createChatResponse("Hello");
         ChatResponse response2 = createChatResponse("world");
         ChatResponse response3 = createChatResponse("test");

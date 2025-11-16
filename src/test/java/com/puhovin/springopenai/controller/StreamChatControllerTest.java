@@ -1,7 +1,7 @@
-package com.puhovin.claudespringai.controller;
+package com.puhovin.springopenai.controller;
 
-import com.puhovin.claudespringai.dto.ChatRequest;
-import com.puhovin.claudespringai.service.ClaudeStreamService;
+import com.puhovin.springopenai.dto.ChatRequest;
+import com.puhovin.springopenai.service.OpenAiStreamService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.verify;
 class StreamChatControllerTest {
 
     @Mock
-    private ClaudeStreamService streamService;
+    private OpenAiStreamService streamService;
 
     @InjectMocks
     private StreamChatController controller;
@@ -34,7 +34,7 @@ class StreamChatControllerTest {
         @Test
         @DisplayName("Should return streaming response when valid request is provided")
         void shouldReturnStreamingResponse_whenValidRequestProvided() {
-            ChatRequest request = new ChatRequest("Hello, Claude!");
+            ChatRequest request = new ChatRequest("Hello, chat!");
             Flux<String> expectedResponse = Flux.just("Hello", " there", "!");
             doReturn(expectedResponse).when(streamService).streamChat(request.message());
 
@@ -90,7 +90,7 @@ class StreamChatControllerTest {
         @Test
         @DisplayName("Should return SSE with sequential IDs and event type")
         void shouldReturnSseWithSequentialIds_whenValidRequestProvided() {
-            ChatRequest request = new ChatRequest("Hello, Claude!");
+            ChatRequest request = new ChatRequest("Hello, chat!");
             Flux<String> serviceResponse = Flux.just("Hello", " there", "!");
             doReturn(serviceResponse).when(streamService).streamChat(request.message());
 

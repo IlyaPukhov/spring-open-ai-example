@@ -1,4 +1,4 @@
-package com.puhovin.claudespringai.dto;
+package com.puhovin.springopenai.dto;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -40,7 +40,7 @@ class ChatRequestTest {
     @Test
     @DisplayName("Should pass validation when message is valid")
     void shouldPassValidation_whenMessageIsValid() {
-        ChatRequest request = new ChatRequest("Hello, Claude!");
+        ChatRequest request = new ChatRequest("Hello, chat!");
 
         Set<ConstraintViolation<ChatRequest>> violations = validator.validate(request);
 
@@ -75,7 +75,7 @@ class ChatRequestTest {
 
     static Stream<String> provideValidMessages() {
         return Stream.of(
-                "  Hello, Claude!  ",           // leading and trailing spaces with content
+                "  Hello, chat!  ",           // leading and trailing spaces with content
                 "a",                                    // single character
                 "a".repeat(10000),                // very long message
                 "!@#$%^&*()_+-=[]{}|;':\",./<>?",       // special characters

@@ -1,6 +1,6 @@
-package com.puhovin.claudespringai.config;
+package com.puhovin.springopenai.config;
 
-import org.springframework.ai.anthropic.AnthropicChatModel;
+import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -12,7 +12,7 @@ public class TestConfig {
 
     @Bean
     @Primary
-    public AnthropicChatModel anthropicChatModel() {
-        return mock(AnthropicChatModel.class);
+    public OpenAiChatModel openAiChatModel() {
+        return mock(OpenAiChatModel.class);
     }
 }

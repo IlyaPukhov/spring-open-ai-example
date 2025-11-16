@@ -1,4 +1,4 @@
-package com.puhovin.claudespringai.config;
+package com.puhovin.springopenai.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -14,9 +14,9 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Claude Spring AI API")
+                        .title("Open Spring AI API")
                         .version("1.0.0")
-                        .description("REST API for streaming chat interactions with Claude AI using Spring AI")
+                        .description("REST API for streaming chat interactions with OpenAI using Spring AI")
                         .contact(new Contact()
                                 .name("API Support")
                                 .email("dinamond2003@gmail.com"))

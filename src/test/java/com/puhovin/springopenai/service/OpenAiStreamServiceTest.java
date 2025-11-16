@@ -1,4 +1,4 @@
-package com.puhovin.claudespringai.service;
+package com.puhovin.springopenai.service;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -8,11 +8,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.ai.anthropic.AnthropicChatModel;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.openai.OpenAiChatModel;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
@@ -23,14 +23,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("ClaudeStreamService Unit Tests")
-class ClaudeStreamServiceTest {
+@DisplayName("OpenAiStreamService Unit Tests")
+class OpenAiStreamServiceTest {
 
     @Mock
-    private AnthropicChatModel chatModel;
+    private OpenAiChatModel chatModel;
 
     @InjectMocks
-    private ClaudeStreamService service;
+    private OpenAiStreamService service;
 
     @Nested
     @DisplayName("streamChat() tests")
@@ -39,7 +39,7 @@ class ClaudeStreamServiceTest {
         @Test
         @DisplayName("Should stream chat response when valid message is provided")
         void shouldStreamChatResponse_whenValidMessageProvided() {
-            String message = "Hello, Claude!";
+            String message = "Hello, chat!";
             ChatResponse response1 = createChatResponse("Hello");
             ChatResponse response2 = createChatResponse(" there");
             ChatResponse response3 = createChatResponse("!");
