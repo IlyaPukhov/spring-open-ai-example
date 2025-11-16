@@ -1,6 +1,7 @@
 package com.puhovin.springopenai.controller;
 
 import com.puhovin.springopenai.dto.ChatRequest;
+import com.puhovin.springopenai.service.OpenAiChatService;
 import com.puhovin.springopenai.service.OpenAiStreamService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,16 +16,33 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/chat")
-@Tag(name = "Chat", description = "Streaming chat API for OpenAI interactions")
+@Tag(name = "Chat", description = "Chat API for OpenAI interactions with both blocking and streaming modes")
 public class StreamChatController {
 
     private final OpenAiStreamService streamService;
+    private final OpenAiChatService chatService;
 
-    public StreamChatController(OpenAiStreamService streamService) {
+    public StreamChatController(OpenAiStreamService streamService, OpenAiChatService chatService) {
         this.streamService = streamService;
+        this.chatService = chatService;
+    }
+
+    @Operation(
+            summary = "Send chat request (non-streaming)",
+            description = "Sends a message to OpenAI and returns the complete response as a single message",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully received response",
+                            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = String.class))),
+                    @ApiResponse(responseCode = "400", description = "Invalid request")
+            }
+    )
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<String> chat(@RequestBody @Validated ChatRequest request) {
+        return chatService.chat(request.message());
     }
 
     @Operation(

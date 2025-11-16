@@ -1,6 +1,7 @@
 package com.puhovin.springopenai.controller;
 
 import com.puhovin.springopenai.dto.ChatRequest;
+import com.puhovin.springopenai.service.OpenAiChatService;
 import com.puhovin.springopenai.service.OpenAiStreamService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,6 +14,8 @@ import org.springframework.http.codec.ServerSentEvent;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
+import reactor.core.publisher.Mono;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
@@ -23,6 +26,9 @@ class StreamChatControllerTest {
 
     @Mock
     private OpenAiStreamService streamService;
+
+    @Mock
+    private OpenAiChatService chatService;
 
     @InjectMocks
     private StreamChatController controller;
@@ -168,6 +174,92 @@ class StreamChatControllerTest {
                     .verifyComplete();
 
             verify(streamService).streamChat(request.message());
+        }
+    }
+
+    @Nested
+    @DisplayName("chat() non-streaming tests")
+    class ChatTests {
+
+        @Test
+        @DisplayName("Should return complete response when valid request is provided")
+        void shouldReturnCompleteResponse_whenValidRequestProvided() {
+            ChatRequest request = new ChatRequest("Hello, chat!");
+            String expectedResponse = "Hello! How can I help you today?";
+            doReturn(Mono.just(expectedResponse)).when(chatService).chat(request.message());
+
+            Mono<String> actualResponse = controller.chat(request);
+
+            StepVerifier.create(actualResponse)
+                    .expectNext(expectedResponse)
+                    .verifyComplete();
+
+            verify(chatService).chat(request.message());
+        }
+
+        @Test
+        @DisplayName("Should return empty string when service returns empty")
+        void shouldReturnEmptyString_whenServiceReturnsEmpty() {
+            ChatRequest request = new ChatRequest("Empty query");
+            doReturn(Mono.just("")).when(chatService).chat(request.message());
+
+            Mono<String> actualResponse = controller.chat(request);
+
+            StepVerifier.create(actualResponse)
+                    .expectNext("")
+                    .verifyComplete();
+
+            verify(chatService).chat(request.message());
+        }
+
+        @Test
+        @DisplayName("Should propagate error when service throws exception")
+        void shouldPropagateError_whenServiceThrowsException() {
+            ChatRequest request = new ChatRequest("Error query");
+            RuntimeException expectedException = new RuntimeException("Service error");
+            doReturn(Mono.error(expectedException)).when(chatService).chat(request.message());
+
+            Mono<String> actualResponse = controller.chat(request);
+
+            StepVerifier.create(actualResponse)
+                    .expectErrorMatches(throwable ->
+                            throwable instanceof RuntimeException &&
+                            throwable.getMessage().equals("Service error"))
+                    .verify();
+
+            verify(chatService).chat(request.message());
+        }
+
+        @Test
+        @DisplayName("Should handle long response correctly")
+        void shouldHandleLongResponse_correctly() {
+            ChatRequest request = new ChatRequest("Long query");
+            String longResponse = "Long response ".repeat(100);
+            doReturn(Mono.just(longResponse)).when(chatService).chat(request.message());
+
+            Mono<String> actualResponse = controller.chat(request);
+
+            StepVerifier.create(actualResponse)
+                    .expectNext(longResponse)
+                    .verifyComplete();
+
+            verify(chatService).chat(request.message());
+        }
+
+        @Test
+        @DisplayName("Should handle special characters in response")
+        void shouldHandleSpecialCharacters_inResponse() {
+            ChatRequest request = new ChatRequest("Special chars query");
+            String responseWithSpecialChars = "Response with special chars: !@#$%^&*()_+-=[]{}|;':\"<>?,./";
+            doReturn(Mono.just(responseWithSpecialChars)).when(chatService).chat(request.message());
+
+            Mono<String> actualResponse = controller.chat(request);
+
+            StepVerifier.create(actualResponse)
+                    .expectNext(responseWithSpecialChars)
+                    .verifyComplete();
+
+            verify(chatService).chat(request.message());
         }
     }
 }

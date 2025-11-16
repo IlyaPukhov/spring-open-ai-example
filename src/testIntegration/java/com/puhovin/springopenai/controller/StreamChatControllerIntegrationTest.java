@@ -215,6 +215,116 @@ class StreamChatControllerIntegrationTest {
         verify(chatModel).stream(any(Prompt.class));
     }
 
+    @Test
+    @DisplayName("POST /chat should return complete response successfully (non-streaming)")
+    void shouldReturnCompleteResponse_successfully() {
+        ChatRequest request = new ChatRequest("Hello, chat!");
+        ChatResponse response = createChatResponse("Hello! How can I help you today?");
+
+        doReturn(response).when(chatModel).call(any(Prompt.class));
+
+        webTestClient.post()
+                .uri("/chat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+                .expectBody(String.class)
+                .isEqualTo("Hello! How can I help you today?");
+
+        verify(chatModel).call(any(Prompt.class));
+    }
+
+    @Test
+    @DisplayName("POST /chat should return 400 for blank message (non-streaming)")
+    void shouldReturn400_forBlankMessage_blocking() {
+        ChatRequest request = new ChatRequest("");
+
+        webTestClient.post()
+                .uri("/chat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
+    @DisplayName("POST /chat should return 400 for null message (non-streaming)")
+    void shouldReturn400_forNullMessage_blocking() {
+        webTestClient.post()
+                .uri("/chat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue("{\"message\": null}")
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
+    @DisplayName("POST /chat should return empty string when content is null (non-streaming)")
+    void shouldReturnEmptyString_whenContentIsNull() {
+        ChatRequest request = new ChatRequest("Test message");
+        ChatResponse response = createChatResponse(null);
+
+        doReturn(response).when(chatModel).call(any(Prompt.class));
+
+        webTestClient.post()
+                .uri("/chat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+                .expectBody(String.class)
+                .isEqualTo("");
+
+        verify(chatModel).call(any(Prompt.class));
+    }
+
+    @Test
+    @DisplayName("POST /chat should handle long response correctly (non-streaming)")
+    void shouldHandleLongResponse_correctly() {
+        ChatRequest request = new ChatRequest("Tell me a long story");
+        String longResponse = "This is a very long response. ".repeat(50);
+        ChatResponse response = createChatResponse(longResponse);
+
+        doReturn(response).when(chatModel).call(any(Prompt.class));
+
+        webTestClient.post()
+                .uri("/chat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+                .expectBody(String.class)
+                .isEqualTo(longResponse);
+
+        verify(chatModel).call(any(Prompt.class));
+    }
+
+    @Test
+    @DisplayName("POST /chat should handle special characters in response (non-streaming)")
+    void shouldHandleSpecialCharacters_inResponse() {
+        ChatRequest request = new ChatRequest("Special chars");
+        String responseWithSpecialChars = "Response with special chars: !@#$%^&*()_+-=[]{}|;':\"<>?,./";
+        ChatResponse response = createChatResponse(responseWithSpecialChars);
+
+        doReturn(response).when(chatModel).call(any(Prompt.class));
+
+        webTestClient.post()
+                .uri("/chat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+                .expectBody(String.class)
+                .isEqualTo(responseWithSpecialChars);
+
+        verify(chatModel).call(any(Prompt.class));
+    }
+
     private ChatResponse createChatResponse(String text) {
         ChatResponse chatResponse = mock(ChatResponse.class);
         Generation generation = mock(Generation.class);
