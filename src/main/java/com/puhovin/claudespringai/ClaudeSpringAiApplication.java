@@ -9,5 +9,4 @@ public class ClaudeSpringAiApplication {
     public static void main(String[] args) {
         SpringApplication.run(ClaudeSpringAiApplication.class, args);
     }
-
 }
