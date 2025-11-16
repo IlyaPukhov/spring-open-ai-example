@@ -38,6 +38,30 @@ dependencyManagement {
     }
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
+
+    testLogging {
+        events 'PASSED', 'FAILED', 'SKIPPED'
+    }
+
+    doFirst {
+        def mockitoAgent = classpath.find { it.name.contains("byte-buddy-agent") }
+        if (mockitoAgent) {
+            jvmArgs "-javaagent:${mockitoAgent}"
+        }
+    }
 }
+
+sourceSets {
+    test {
+        java {
+            srcDirs += 'src/testIntegration/java'
+        }
+        resources {
+            srcDirs += 'src/testIntegration/resources'
+        }
+    }
+}
+
+jar.enabled = false
